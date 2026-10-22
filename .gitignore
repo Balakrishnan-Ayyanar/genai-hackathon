@@ -1,0 +1,26 @@
+# Local vendor installations and downloaded hackathon material
+/zetaris-platform/
+/zetaris-getting-started/
+/reference/
+
+# Credentials and local configuration
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+id_ed25519*
+id_rsa*
+
+# Dependencies, builds, generated artifacts and runtime state
+**/node_modules/
+**/dist/
+**/.runtime/
+**/playwright-report/
+**/test-results/
+**/__pycache__/
+*.py[cod]
+*.log
+.DS_Store

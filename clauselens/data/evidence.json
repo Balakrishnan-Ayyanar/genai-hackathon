@@ -1,0 +1,273 @@
+[
+  {
+    "id": "policy-classification",
+    "kind": "PolicyClause",
+    "label": "\u00a71 \u00b7 Classification",
+    "sourceId": "SRC-POLICY-CLASSIFICATION",
+    "version": "POL-2026.1",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "External sharing is allowed only for Partner-shareable documents. Restricted documents must not be shared externally.",
+    "facts": {
+      "rule": "classification",
+      "allowed": [
+        "class-partner"
+      ],
+      "prohibited": [
+        "class-restricted"
+      ]
+    }
+  },
+  {
+    "id": "policy-nda",
+    "kind": "PolicyClause",
+    "label": "\u00a72 \u00b7 NDA coverage",
+    "sourceId": "SRC-POLICY-NDA",
+    "version": "POL-2026.1",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "An active NDA must cover the exact supplier and intended purpose on the evaluation date. Validity includes both start and end dates. An expired NDA fails this check; an absent record is unknown.",
+    "facts": {
+      "rule": "nda",
+      "inclusiveDates": true
+    }
+  },
+  {
+    "id": "policy-approval",
+    "kind": "PolicyClause",
+    "label": "\u00a73 \u00b7 Owner approval",
+    "sourceId": "SRC-POLICY-APPROVAL",
+    "version": "POL-2026.1",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "An active approval by the document owner must identify the report, recipient and purpose. An explicit denial fails. A missing matching record leaves permission unestablished; it does not prove approval never happened.",
+    "facts": {
+      "rule": "approval",
+      "requireOwner": true
+    }
+  },
+  {
+    "id": "policy-conflicts",
+    "kind": "PolicyClause",
+    "label": "\u00a74 \u00b7 Evidence and conflicts",
+    "sourceId": "SRC-POLICY-CONFLICTS",
+    "version": "POL-2026.1",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Use evidence effective on the evaluation date. Unresolved opposing records require review. Otherwise explicit failures take precedence over unknown facts, and all checks must pass for permission. Simulated facts are hypothetical and never grant access.",
+    "facts": {
+      "rule": "conflicts"
+    }
+  },
+  {
+    "id": "class-partner",
+    "kind": "Classification",
+    "label": "Partner-shareable",
+    "sourceId": "SRC-CLASS-PARTNER",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Partner-shareable material is eligible for external sharing subject to NDA and owner approval.",
+    "facts": {}
+  },
+  {
+    "id": "class-restricted",
+    "kind": "Classification",
+    "label": "Restricted",
+    "sourceId": "SRC-CLASS-RESTRICTED",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Restricted material must not be shared externally.",
+    "facts": {}
+  },
+  {
+    "id": "doc-orion",
+    "kind": "Document",
+    "label": "Project Orion \u00b7 Design report",
+    "sourceId": "SRC-DOC-ORION",
+    "version": "3",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Orion design report v3 is Partner-shareable. Document owner: Maya Chen.",
+    "facts": {
+      "classificationId": "class-partner",
+      "ownerId": "owner-maya",
+      "aliases": [
+        "orion",
+        "design report"
+      ]
+    }
+  },
+  {
+    "id": "doc-vega",
+    "kind": "Document",
+    "label": "Project Vega \u00b7 Security report",
+    "sourceId": "SRC-DOC-VEGA",
+    "version": "2",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Vega security report v2 is Restricted. Document owner: Arun Shah.",
+    "facts": {
+      "classificationId": "class-restricted",
+      "ownerId": "owner-arun",
+      "aliases": [
+        "vega",
+        "security report"
+      ]
+    }
+  },
+  {
+    "id": "supplier-a",
+    "kind": "Supplier",
+    "label": "Supplier A",
+    "sourceId": "SRC-SUPPLIER-A",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Supplier A is the fictional engineering partner Aster Components.",
+    "facts": {
+      "aliases": [
+        "supplier a",
+        "aster"
+      ]
+    }
+  },
+  {
+    "id": "supplier-b",
+    "kind": "Supplier",
+    "label": "Supplier B",
+    "sourceId": "SRC-SUPPLIER-B",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Supplier B is the fictional supplier Boreal Systems.",
+    "facts": {
+      "aliases": [
+        "supplier b",
+        "boreal"
+      ]
+    }
+  },
+  {
+    "id": "nda-a",
+    "kind": "Agreement",
+    "label": "NDA \u00b7 Supplier A",
+    "sourceId": "SRC-NDA-A",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Supplier A NDA covers technical review, marketing and audit from 1 January 2026 through 31 December 2027 inclusive.",
+    "facts": {
+      "supplierId": "supplier-a",
+      "purposes": [
+        "technical review",
+        "marketing",
+        "audit"
+      ],
+      "status": "valid"
+    }
+  },
+  {
+    "id": "nda-b",
+    "kind": "Agreement",
+    "label": "NDA \u00b7 Supplier B (expired)",
+    "sourceId": "SRC-NDA-B",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2026-09-30",
+    "passage": "Supplier B NDA covers technical review from 1 January 2026 through 30 September 2026 inclusive. No renewal is supplied.",
+    "facts": {
+      "supplierId": "supplier-b",
+      "purposes": [
+        "technical review"
+      ],
+      "status": "valid"
+    }
+  },
+  {
+    "id": "approval-marketing",
+    "kind": "Approval",
+    "label": "Approval Marketing",
+    "sourceId": "SRC-APPROVAL-MARKETING",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Owner owner-maya recorded approved for doc-orion to supplier-a for marketing. No superseding record is supplied.",
+    "facts": {
+      "documentId": "doc-orion",
+      "supplierId": "supplier-a",
+      "purpose": "marketing",
+      "ownerId": "owner-maya",
+      "status": "approved"
+    }
+  },
+  {
+    "id": "approval-b",
+    "kind": "Approval",
+    "label": "Approval B",
+    "sourceId": "SRC-APPROVAL-B",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Owner owner-maya recorded approved for doc-orion to supplier-b for technical review. No superseding record is supplied.",
+    "facts": {
+      "documentId": "doc-orion",
+      "supplierId": "supplier-b",
+      "purpose": "technical review",
+      "ownerId": "owner-maya",
+      "status": "approved"
+    }
+  },
+  {
+    "id": "approval-vega",
+    "kind": "Approval",
+    "label": "Approval Vega",
+    "sourceId": "SRC-APPROVAL-VEGA",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Owner owner-arun recorded approved for doc-vega to supplier-a for technical review. No superseding record is supplied.",
+    "facts": {
+      "documentId": "doc-vega",
+      "supplierId": "supplier-a",
+      "purpose": "technical review",
+      "ownerId": "owner-arun",
+      "status": "approved"
+    }
+  },
+  {
+    "id": "approval-audit-yes",
+    "kind": "Approval",
+    "label": "Approval Audit Yes",
+    "sourceId": "SRC-APPROVAL-AUDIT-YES",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Owner owner-maya recorded approved for doc-orion to supplier-a for audit. No superseding record is supplied.",
+    "facts": {
+      "documentId": "doc-orion",
+      "supplierId": "supplier-a",
+      "purpose": "audit",
+      "ownerId": "owner-maya",
+      "status": "approved"
+    }
+  },
+  {
+    "id": "approval-audit-no",
+    "kind": "Approval",
+    "label": "Approval Audit No",
+    "sourceId": "SRC-APPROVAL-AUDIT-NO",
+    "version": "1.0",
+    "effectiveFrom": "2026-01-01",
+    "effectiveTo": "2027-12-31",
+    "passage": "Owner owner-maya recorded denied for doc-orion to supplier-a for audit. No superseding record is supplied.",
+    "facts": {
+      "documentId": "doc-orion",
+      "supplierId": "supplier-a",
+      "purpose": "audit",
+      "ownerId": "owner-maya",
+      "status": "denied"
+    }
+  }
+]

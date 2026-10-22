@@ -1,0 +1,12 @@
+import { z } from 'zod';
+export const kinds = ['Document','Classification','Supplier','Agreement','PolicyClause','Approval','SharingRequest'] as const;
+export const EvidenceSchema = z.object({id:z.string().min(1),kind:z.enum(kinds),label:z.string(),sourceId:z.string(),version:z.string(),effectiveFrom:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),effectiveTo:z.string().regex(/^\d{4}-\d{2}-\d{2}$/),passage:z.string(),facts:z.record(z.string(),z.unknown()),simulated:z.boolean().optional(),lineage:z.object({sourceSystem:z.string(),semanticTable:z.string(),sourceEndpoint:z.string()}).optional()});
+export type Evidence = z.infer<typeof EvidenceSchema>;
+export const CaseSchema = z.object({question:z.string().max(1500).default(''),documentId:z.string().max(80),supplierId:z.string().max(80),purpose:z.enum(['technical review','marketing','audit']),date:z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(d=>!isNaN(Date.parse(d))&&new Date(d).toISOString().slice(0,10)===d,'Invalid calendar date')});
+export type SharingCase=z.infer<typeof CaseSchema>;
+export type Status='pass'|'fail'|'unknown'|'conflict';
+export type Check={id:string;label:string;status:Status;detail:string;sourceIds:string[]};
+export const outcomes={permitted:'Permitted under the supplied policy and evidence',denied:'Not permitted because an explicit rule fails',unknown:'Insufficient information because a required fact is unknown',conflict:'Conflicting evidence requiring review'} as const;
+export type Decision={outcome:keyof typeof outcomes;title:string;checks:Check[];request:SharingCase;evidence:Evidence[];policyVersions:string[];missingFacts:string[]};
+export const active=(e:Evidence,date:string)=>e.effectiveFrom<=date&&date<=e.effectiveTo;
+export const baselineCase:SharingCase={question:'Can I share Project Orion’s design report with Supplier A for technical review?',documentId:'doc-orion',supplierId:'supplier-a',purpose:'technical review',date:'2026-10-22'};

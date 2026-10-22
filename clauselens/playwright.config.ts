@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./e2e',workers:1,timeout:120000,expect:{timeout:15000},reporter:[['list'],['html',{open:'never',outputFolder:'.runtime/playwright-report'}]],outputDir:'.runtime/browser-results',use:{actionTimeout:15000,baseURL:'http://localhost:3100',channel:'chrome',headless:true,viewport:{width:1440,height:1000},screenshot:'only-on-failure',trace:'retain-on-failure'},projects:[{name:'desktop-chrome'},{name:'mobile-chrome',use:{viewport:{width:390,height:844},isMobile:true,hasTouch:true}}]});

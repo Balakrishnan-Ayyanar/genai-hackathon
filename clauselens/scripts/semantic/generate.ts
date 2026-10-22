@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import {sources,tables,ddl,activation,MODEL_NAMESPACE,MODEL_NAME} from '../../src/semantic.ts';
+const gateway=process.env.CLAUSELENS_SOURCE_HOST??'172.18.0.1';
+if(!/^[\w.-]+$/.test(gateway))throw new Error('Invalid source host');
+const create=sources.flatMap(s=>[`CREATE LIGHTNING DATABASE ${s.database} DESCRIBE BY "ClauseLens fictional ${s.id}"`,`CREATE LIGHTNING REST TABLE registry FROM ${s.database} REQUEST(endpoint "http://${gateway}:3100${s.endpoint}", method "get", response_type "json", http_encoding "URLENCODED") HEADER () BODY ()`]);
+fs.writeFileSync('scripts/semantic/01_sources_create.sql',create.join(';\n\n')+';\n');
+fs.writeFileSync('scripts/semantic/02_model_create.sql',`CREATE NAMESPACE IF NOT EXISTS lightning.metastore;\nCREATE NAMESPACE IF NOT EXISTS ${MODEL_NAMESPACE};\n\n${ddl()}\n\nUPDATE USL ${MODEL_NAMESPACE}.${MODEL_NAME} SET DESCRIPTION 'ClauseLens sharing evidence: five fictional source systems, normalized entities, provenance and explicit relationships; no materialization or permission granting.';\n`);
+fs.writeFileSync('scripts/semantic/03_activate.sql',tables.map(t=>activation(t)+';').join('\n\n')+'\n');
+fs.writeFileSync('scripts/semantic/mapping.json',JSON.stringify({namespace:MODEL_NAMESPACE,model:MODEL_NAME,sources,tables},null,2)+'\n');
+console.log('Generated source registration, model DDL, activation queries and mapping manifest.');

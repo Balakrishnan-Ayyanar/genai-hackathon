@@ -1,0 +1,48 @@
+{
+  "documents": [
+    {
+      "report_code": "doc-orion",
+      "report_title": "Project Orion \u00b7 Design report",
+      "classification_code": "class-partner",
+      "owner_code": "owner-maya",
+      "aliases_json": "[\"orion\", \"design report\"]",
+      "source_ref": "SRC-DOC-ORION",
+      "revision": "3",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Orion design report v3 is Partner-shareable. Document owner: Maya Chen."
+    },
+    {
+      "report_code": "doc-vega",
+      "report_title": "Project Vega \u00b7 Security report",
+      "classification_code": "class-restricted",
+      "owner_code": "owner-arun",
+      "aliases_json": "[\"vega\", \"security report\"]",
+      "source_ref": "SRC-DOC-VEGA",
+      "revision": "2",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Vega security report v2 is Restricted. Document owner: Arun Shah."
+    }
+  ],
+  "classifications": [
+    {
+      "class_code": "class-partner",
+      "caption": "Partner-shareable",
+      "source_ref": "SRC-CLASS-PARTNER",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Partner-shareable material is eligible for external sharing subject to NDA and owner approval."
+    },
+    {
+      "class_code": "class-restricted",
+      "caption": "Restricted",
+      "source_ref": "SRC-CLASS-RESTRICTED",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Restricted material must not be shared externally."
+    }
+  ]
+}

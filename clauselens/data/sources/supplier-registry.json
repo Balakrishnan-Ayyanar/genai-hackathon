@@ -1,0 +1,24 @@
+{
+  "suppliers": [
+    {
+      "vendor_code": "supplier-a",
+      "display_name": "Supplier A",
+      "aliases_json": "[\"supplier a\", \"aster\"]",
+      "source_ref": "SRC-SUPPLIER-A",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Supplier A is the fictional engineering partner Aster Components."
+    },
+    {
+      "vendor_code": "supplier-b",
+      "display_name": "Supplier B",
+      "aliases_json": "[\"supplier b\", \"boreal\"]",
+      "source_ref": "SRC-SUPPLIER-B",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Supplier B is the fictional supplier Boreal Systems."
+    }
+  ]
+}

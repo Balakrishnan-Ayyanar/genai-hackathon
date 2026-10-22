@@ -1,0 +1,48 @@
+{
+  "clauses": [
+    {
+      "clause_code": "policy-classification",
+      "heading": "\u00a71 \u00b7 Classification",
+      "rule_key": "classification",
+      "config_json": "{\"rule\": \"classification\", \"allowed\": [\"class-partner\"], \"prohibited\": [\"class-restricted\"]}",
+      "source_ref": "SRC-POLICY-CLASSIFICATION",
+      "revision": "POL-2026.1",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "External sharing is allowed only for Partner-shareable documents. Restricted documents must not be shared externally."
+    },
+    {
+      "clause_code": "policy-nda",
+      "heading": "\u00a72 \u00b7 NDA coverage",
+      "rule_key": "nda",
+      "config_json": "{\"rule\": \"nda\", \"inclusiveDates\": true}",
+      "source_ref": "SRC-POLICY-NDA",
+      "revision": "POL-2026.1",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "An active NDA must cover the exact supplier and intended purpose on the evaluation date. Validity includes both start and end dates. An expired NDA fails this check; an absent record is unknown."
+    },
+    {
+      "clause_code": "policy-approval",
+      "heading": "\u00a73 \u00b7 Owner approval",
+      "rule_key": "approval",
+      "config_json": "{\"rule\": \"approval\", \"requireOwner\": true}",
+      "source_ref": "SRC-POLICY-APPROVAL",
+      "revision": "POL-2026.1",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "An active approval by the document owner must identify the report, recipient and purpose. An explicit denial fails. A missing matching record leaves permission unestablished; it does not prove approval never happened."
+    },
+    {
+      "clause_code": "policy-conflicts",
+      "heading": "\u00a74 \u00b7 Evidence and conflicts",
+      "rule_key": "conflicts",
+      "config_json": "{\"rule\": \"conflicts\"}",
+      "source_ref": "SRC-POLICY-CONFLICTS",
+      "revision": "POL-2026.1",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Use evidence effective on the evaluation date. Unresolved opposing records require review. Otherwise explicit failures take precedence over unknown facts, and all checks must pass for permission. Simulated facts are hypothetical and never grant access."
+    }
+  ]
+}

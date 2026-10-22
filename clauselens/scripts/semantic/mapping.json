@@ -1,0 +1,374 @@
+{
+  "namespace": "lightning.metastore.clauselens",
+  "model": "sharing_model",
+  "sources": [
+    {
+      "id": "document-registry",
+      "database": "CL_DOCUMENTS",
+      "endpoint": "/source/document-registry",
+      "file": "data/sources/document-registry.json",
+      "fictional": true
+    },
+    {
+      "id": "supplier-registry",
+      "database": "CL_SUPPLIERS",
+      "endpoint": "/source/supplier-registry",
+      "file": "data/sources/supplier-registry.json",
+      "fictional": true
+    },
+    {
+      "id": "agreement-register",
+      "database": "CL_AGREEMENTS",
+      "endpoint": "/source/agreement-register",
+      "file": "data/sources/agreement-register.json",
+      "fictional": true
+    },
+    {
+      "id": "approval-register",
+      "database": "CL_APPROVALS",
+      "endpoint": "/source/approval-register",
+      "file": "data/sources/approval-register.json",
+      "fictional": true
+    },
+    {
+      "id": "policy-repository",
+      "database": "CL_POLICIES",
+      "endpoint": "/source/policy-repository",
+      "file": "data/sources/policy-repository.json",
+      "fictional": true
+    }
+  ],
+  "tables": [
+    {
+      "name": "classification",
+      "source": "document-registry",
+      "database": "CL_DOCUMENTS",
+      "collection": "classifications",
+      "kind": "Classification",
+      "columns": [
+        {
+          "name": "classification_id",
+          "raw": "class_code",
+          "primary": true
+        },
+        {
+          "name": "label",
+          "raw": "caption"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        },
+        {
+          "name": "version",
+          "raw": "revision"
+        },
+        {
+          "name": "effective_from",
+          "raw": "valid_from",
+          "type": "date"
+        },
+        {
+          "name": "effective_to",
+          "raw": "valid_until",
+          "type": "date"
+        },
+        {
+          "name": "passage",
+          "raw": "source_text",
+          "type": "varchar(4000)"
+        }
+      ]
+    },
+    {
+      "name": "document",
+      "source": "document-registry",
+      "database": "CL_DOCUMENTS",
+      "collection": "documents",
+      "kind": "Document",
+      "columns": [
+        {
+          "name": "document_id",
+          "raw": "report_code",
+          "primary": true
+        },
+        {
+          "name": "label",
+          "raw": "report_title"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        },
+        {
+          "name": "version",
+          "raw": "revision"
+        },
+        {
+          "name": "effective_from",
+          "raw": "valid_from",
+          "type": "date"
+        },
+        {
+          "name": "effective_to",
+          "raw": "valid_until",
+          "type": "date"
+        },
+        {
+          "name": "passage",
+          "raw": "source_text",
+          "type": "varchar(4000)"
+        },
+        {
+          "name": "classification_id",
+          "raw": "classification_code",
+          "references": "classification(classification_id)"
+        },
+        {
+          "name": "owner_id",
+          "raw": "owner_code"
+        },
+        {
+          "name": "aliases_json",
+          "raw": "aliases_json",
+          "type": "varchar(2000)"
+        }
+      ]
+    },
+    {
+      "name": "supplier",
+      "source": "supplier-registry",
+      "database": "CL_SUPPLIERS",
+      "collection": "suppliers",
+      "kind": "Supplier",
+      "columns": [
+        {
+          "name": "supplier_id",
+          "raw": "vendor_code",
+          "primary": true
+        },
+        {
+          "name": "label",
+          "raw": "display_name"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        },
+        {
+          "name": "version",
+          "raw": "revision"
+        },
+        {
+          "name": "effective_from",
+          "raw": "valid_from",
+          "type": "date"
+        },
+        {
+          "name": "effective_to",
+          "raw": "valid_until",
+          "type": "date"
+        },
+        {
+          "name": "passage",
+          "raw": "source_text",
+          "type": "varchar(4000)"
+        },
+        {
+          "name": "aliases_json",
+          "raw": "aliases_json",
+          "type": "varchar(2000)"
+        }
+      ]
+    },
+    {
+      "name": "agreement",
+      "source": "agreement-register",
+      "database": "CL_AGREEMENTS",
+      "collection": "agreements",
+      "kind": "Agreement",
+      "columns": [
+        {
+          "name": "agreement_id",
+          "raw": "contract_code",
+          "primary": true
+        },
+        {
+          "name": "label",
+          "raw": "contract_title"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        },
+        {
+          "name": "version",
+          "raw": "revision"
+        },
+        {
+          "name": "effective_from",
+          "raw": "valid_from",
+          "type": "date"
+        },
+        {
+          "name": "effective_to",
+          "raw": "valid_until",
+          "type": "date"
+        },
+        {
+          "name": "passage",
+          "raw": "source_text",
+          "type": "varchar(4000)"
+        },
+        {
+          "name": "supplier_id",
+          "raw": "vendor_code",
+          "references": "supplier(supplier_id)"
+        },
+        {
+          "name": "status",
+          "raw": "contract_state"
+        }
+      ]
+    },
+    {
+      "name": "agreement_purpose",
+      "source": "agreement-register",
+      "database": "CL_AGREEMENTS",
+      "collection": "purposes",
+      "columns": [
+        {
+          "name": "coverage_id",
+          "raw": "coverage_code",
+          "primary": true
+        },
+        {
+          "name": "agreement_id",
+          "raw": "contract_code",
+          "references": "agreement(agreement_id)"
+        },
+        {
+          "name": "purpose",
+          "raw": "purpose_code"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        }
+      ]
+    },
+    {
+      "name": "approval",
+      "source": "approval-register",
+      "database": "CL_APPROVALS",
+      "collection": "approvals",
+      "kind": "Approval",
+      "columns": [
+        {
+          "name": "approval_id",
+          "raw": "decision_code",
+          "primary": true
+        },
+        {
+          "name": "label",
+          "raw": "decision_title"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        },
+        {
+          "name": "version",
+          "raw": "revision"
+        },
+        {
+          "name": "effective_from",
+          "raw": "valid_from",
+          "type": "date"
+        },
+        {
+          "name": "effective_to",
+          "raw": "valid_until",
+          "type": "date"
+        },
+        {
+          "name": "passage",
+          "raw": "source_text",
+          "type": "varchar(4000)"
+        },
+        {
+          "name": "document_id",
+          "raw": "report_ref",
+          "references": "document(document_id)"
+        },
+        {
+          "name": "supplier_id",
+          "raw": "recipient_id",
+          "references": "supplier(supplier_id)"
+        },
+        {
+          "name": "owner_id",
+          "raw": "approver_ref"
+        },
+        {
+          "name": "purpose",
+          "raw": "intended_use"
+        },
+        {
+          "name": "status",
+          "raw": "decision"
+        }
+      ]
+    },
+    {
+      "name": "policy_clause",
+      "source": "policy-repository",
+      "database": "CL_POLICIES",
+      "collection": "clauses",
+      "kind": "PolicyClause",
+      "columns": [
+        {
+          "name": "clause_id",
+          "raw": "clause_code",
+          "primary": true
+        },
+        {
+          "name": "label",
+          "raw": "heading"
+        },
+        {
+          "name": "source_id",
+          "raw": "source_ref"
+        },
+        {
+          "name": "version",
+          "raw": "revision"
+        },
+        {
+          "name": "effective_from",
+          "raw": "valid_from",
+          "type": "date"
+        },
+        {
+          "name": "effective_to",
+          "raw": "valid_until",
+          "type": "date"
+        },
+        {
+          "name": "passage",
+          "raw": "source_text",
+          "type": "varchar(4000)"
+        },
+        {
+          "name": "rule_key",
+          "raw": "rule_key"
+        },
+        {
+          "name": "config_json",
+          "raw": "config_json",
+          "type": "varchar(4000)"
+        }
+      ]
+    }
+  ]
+}

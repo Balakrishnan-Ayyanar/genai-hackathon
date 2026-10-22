@@ -1,0 +1,74 @@
+{
+  "approvals": [
+    {
+      "decision_code": "approval-marketing",
+      "decision_title": "Approval Marketing",
+      "report_ref": "doc-orion",
+      "recipient_id": "supplier-a",
+      "approver_ref": "owner-maya",
+      "intended_use": "marketing",
+      "decision": "approved",
+      "source_ref": "SRC-APPROVAL-MARKETING",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Owner owner-maya recorded approved for doc-orion to supplier-a for marketing. No superseding record is supplied."
+    },
+    {
+      "decision_code": "approval-b",
+      "decision_title": "Approval B",
+      "report_ref": "doc-orion",
+      "recipient_id": "supplier-b",
+      "approver_ref": "owner-maya",
+      "intended_use": "technical review",
+      "decision": "approved",
+      "source_ref": "SRC-APPROVAL-B",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Owner owner-maya recorded approved for doc-orion to supplier-b for technical review. No superseding record is supplied."
+    },
+    {
+      "decision_code": "approval-vega",
+      "decision_title": "Approval Vega",
+      "report_ref": "doc-vega",
+      "recipient_id": "supplier-a",
+      "approver_ref": "owner-arun",
+      "intended_use": "technical review",
+      "decision": "approved",
+      "source_ref": "SRC-APPROVAL-VEGA",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Owner owner-arun recorded approved for doc-vega to supplier-a for technical review. No superseding record is supplied."
+    },
+    {
+      "decision_code": "approval-audit-yes",
+      "decision_title": "Approval Audit Yes",
+      "report_ref": "doc-orion",
+      "recipient_id": "supplier-a",
+      "approver_ref": "owner-maya",
+      "intended_use": "audit",
+      "decision": "approved",
+      "source_ref": "SRC-APPROVAL-AUDIT-YES",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Owner owner-maya recorded approved for doc-orion to supplier-a for audit. No superseding record is supplied."
+    },
+    {
+      "decision_code": "approval-audit-no",
+      "decision_title": "Approval Audit No",
+      "report_ref": "doc-orion",
+      "recipient_id": "supplier-a",
+      "approver_ref": "owner-maya",
+      "intended_use": "audit",
+      "decision": "denied",
+      "source_ref": "SRC-APPROVAL-AUDIT-NO",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Owner owner-maya recorded denied for doc-orion to supplier-a for audit. No superseding record is supplied."
+    }
+  ]
+}

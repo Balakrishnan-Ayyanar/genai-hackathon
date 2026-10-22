@@ -1,0 +1,52 @@
+{
+  "agreements": [
+    {
+      "contract_code": "nda-a",
+      "contract_title": "NDA \u00b7 Supplier A",
+      "vendor_code": "supplier-a",
+      "contract_state": "valid",
+      "source_ref": "SRC-NDA-A",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2027-12-31",
+      "source_text": "Supplier A NDA covers technical review, marketing and audit from 1 January 2026 through 31 December 2027 inclusive."
+    },
+    {
+      "contract_code": "nda-b",
+      "contract_title": "NDA \u00b7 Supplier B (expired)",
+      "vendor_code": "supplier-b",
+      "contract_state": "valid",
+      "source_ref": "SRC-NDA-B",
+      "revision": "1.0",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-09-30",
+      "source_text": "Supplier B NDA covers technical review from 1 January 2026 through 30 September 2026 inclusive. No renewal is supplied."
+    }
+  ],
+  "purposes": [
+    {
+      "coverage_code": "nda-a:technical review",
+      "contract_code": "nda-a",
+      "purpose_code": "technical review",
+      "source_ref": "SRC-NDA-A"
+    },
+    {
+      "coverage_code": "nda-a:marketing",
+      "contract_code": "nda-a",
+      "purpose_code": "marketing",
+      "source_ref": "SRC-NDA-A"
+    },
+    {
+      "coverage_code": "nda-a:audit",
+      "contract_code": "nda-a",
+      "purpose_code": "audit",
+      "source_ref": "SRC-NDA-A"
+    },
+    {
+      "coverage_code": "nda-b:technical review",
+      "contract_code": "nda-b",
+      "purpose_code": "technical review",
+      "source_ref": "SRC-NDA-B"
+    }
+  ]
+}
