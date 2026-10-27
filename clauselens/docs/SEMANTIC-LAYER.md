@@ -1,6 +1,6 @@
 # ClauseLens multi-source semantic layer
 
-The active model is **`lightning.metastore.clauselens.sharing_model`**, versioned in this app as `clauselens-usl-1`. It is deployed and activated in the existing local Zetaris instance. No source data has been materialized into another database.
+The baseline model is **`lightning.metastore.clauselens.sharing_model`**, versioned in this app as `clauselens-usl-1`. It is deployed and activated in the existing local Zetaris instance. No source data has been materialized into another database.
 
 ## Five separately registered fictional sources
 
@@ -73,3 +73,7 @@ The USL establishes common entity definitions and relationships. The fixed TypeS
 `npm run verify:semantic` verifies the deployed model has seven tables and five foreign keys, compares all semantic counts to the actual REST sources, checks all 17 reconstructed evidence records against the legacy baseline, checks missing/conflicting approval retrieval, runs a cross-source join and briefly changes/restores a fictional approval label to prove live access without materialization. It saves `.runtime/semantic-verification.json`. A separate live check confirmed a healthy empty approval register returns zero rows. Source probes should run separately from browser tests.
 
 The app validates query results and has a per-table 1,000-row retrieval ceiling; a result reaching that ceiling fails closed rather than silently truncating. Independent sources are read live and are not a cross-system transactional snapshot. Hashing records what was retrieved; it does not imply every source was read at one atomic instant. There is no production authentication, multi-user isolation or arbitrary policy extraction. This extension does not add a graph database or model-generated SQL/SPARQL.
+
+## AI-assisted proposals
+
+The focused [Semantic Model Builder](SEMANTIC-MODEL-BUILDER.md) is now available at `/builder`. It creates separate reviewed candidate versions and can select a verified candidate for app evaluations. In that case the active path differs from the baseline above. Consult `/api/semantic-model` or the evaluation receipt for the actual selected model. Baseline restoration does not delete candidate USLs.

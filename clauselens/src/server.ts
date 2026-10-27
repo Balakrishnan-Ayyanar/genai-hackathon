@@ -9,6 +9,8 @@ import { evaluate, simulate } from './evaluator.ts';
 import { memoryService } from './memory.ts';
 import { graph } from './graph.ts';
 import {readSource} from './sources.ts';
+import {builderRoutes} from './builder-routes.ts';
+import {activeModels} from './active-model.ts';
 import {sources,tables,MODEL_PATH,MODEL_VERSION} from './semantic.ts';
 const app=express();const port=Number(process.env.PORT??3100);const memory=memoryService();
 app.disable('x-powered-by');
@@ -19,9 +21,17 @@ const fixtures=z.array(EvidenceSchema).parse(JSON.parse(fs.readFileSync('data/ev
 // Read-only fictional source, reachable by the Zetaris Docker driver. No credentials here.
 app.get('/source/evidence',(_req,res)=>res.json({records:fixtures.map(e=>({id:e.id,kind:e.kind,payload:JSON.stringify(e)}))}));
 app.get('/source/:sourceId',(req,res)=>{try{res.json(readSource(req.params.sourceId));}catch{res.status(503).json({error:'Fictional source is unavailable or has invalid data.'});}});
-app.get('/api/semantic-model',(_req,res)=>res.json({name:MODEL_PATH,version:MODEL_VERSION,sources,tables,materialized:false,description:'Five simulated business systems, registered separately in Zetaris and mapped to seven USL tables.'}));
+app.use('/api/builder',builderRoutes());
+app.get('/api/semantic-model',(_req,res)=>{const active=activeModels.get();res.json({name:active.path,version:active.version,proposalId:active.proposalId,sources,tables:active.tables,materialized:false,description:'Five simulated business systems, registered separately in Zetaris and mapped to seven USL tables.'});});
 app.get('/api/catalog',async(_req,res)=>{try{const snapshot=await retrieve();res.json({documents:snapshot.evidence.filter(e=>e.kind==='Document'),suppliers:snapshot.evidence.filter(e=>e.kind==='Supplier'),defaultCase:baselineCase,integration:{mode:snapshot.mode,retrievedAt:snapshot.retrievedAt,count:snapshot.evidence.length,sourceCount:snapshot.sourceCount,semanticModel:snapshot.semanticModel},memory:memory.audit()});}catch{res.status(503).json({error:'Zetaris evidence retrieval failed. Check the source server and registered tables; no local fallback was used.'});}});
-app.post('/api/interpret',async(req,res)=>{try{const input=z.object({question:z.string().min(1).max(1500),date:CaseSchema.shape.date}).parse(req.body);const snapshot=await retrieve();res.json(await interpret(input.question,snapshot.evidence,input.date));}catch{res.status(422).json({error:'Could not interpret this question reliably. Use the explicit case fields to clarify the document, supplier and purpose.'});}});
+app.post('/api/interpret',async(req,res)=>{
+ const parsed=z.object({question:z.string().trim().min(1).max(1500),date:CaseSchema.shape.date}).safeParse(req.body);
+ if(!parsed.success){res.status(400).json({error:'Provide a question and a valid evaluation date.'});return;}
+ let snapshot;
+ try{snapshot=await retrieve();}catch{res.status(503).json({error:'Zetaris evidence retrieval is unavailable. Check the source server and registered tables; question interpretation needs the live document and supplier catalog.'});return;}
+ try{res.json(await interpret(parsed.data.question,snapshot.evidence,parsed.data.date));}
+ catch{res.status(503).json({error:'Nightshift question interpretation is unavailable or returned an invalid response. Check that Nightshift is running on Windows and its WSL tunnel is connected. You can still select the document, supplier and purpose explicitly.'});}
+});
 app.post('/api/evaluate',async(req,res)=>{try{
  const input=z.object({request:CaseSchema,scenario:z.enum(['none','add-approval','expire-nda']).default('none')}).parse(req.body);
  const snapshot=await retrieve(input.request);const baseline=evaluate(input.request,snapshot.evidence);const after=evaluate(input.request,simulate(snapshot.evidence,input.request,input.scenario));const id=randomUUID();
@@ -40,7 +50,7 @@ app.post('/api/explain',async(req,res)=>{try{
  res.json({model:reply.model,mode:reply.mode,focusCheckIds:ids,text:selected.map(c=>`${c.label}: ${c.detail}`).join('\n'),approach:'Nightshift selected check references; displayed explanations are verified rule-engine text.'});
  }catch{res.status(503).json({error:'Nightshift explanation unavailable. The deterministic checks and source evidence remain available.'});}});
 app.get('/api/health',(_req,res)=>res.json({app:'ClauseLens',data:'fictional',integrations:{zetaris:'live case-scoped queries across five separately registered sources through sharing_model USL',nightshift:'live on question interpretation and evidence focus',hmem:memory.audit()}}));
-if(process.env.NODE_ENV==='production')app.use(express.static('dist'));
+if(process.env.NODE_ENV==='production'){app.use(express.static('dist'));app.get('/builder',(_req,res)=>res.sendFile(path.resolve('dist/index.html')));}
 else {const {createServer}=await import('vite');const vite=await createServer({server:{middlewareMode:true},appType:'spa'});app.use(vite.middlewares);}
 app.use((error:unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>res.status(400).json({error:'Invalid request.'}));
 app.listen(port,'0.0.0.0',()=>console.log(`ClauseLens: http://localhost:${port} · fictional data · live integrations`));

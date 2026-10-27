@@ -4,8 +4,8 @@ export const MODEL_NAMESPACE='lightning.metastore.clauselens';
 export const MODEL_NAME='sharing_model';
 export const MODEL_PATH=`${MODEL_NAMESPACE}.${MODEL_NAME}`;
 export const MODEL_VERSION='clauselens-usl-1';
-type Column={name:string;raw:string;type?:string;primary?:boolean;references?:string};
-type Table={name:string;source:string;database:string;collection:string;kind?:Evidence['kind'];columns:Column[]};
+export type Column={name:string;raw:string;type?:string;primary?:boolean;references?:string};
+export type Table={name:string;source:string;database:string;collection:string;kind?:Evidence['kind'];columns:Column[]};
 const common:Column[]=[{name:'source_id',raw:'source_ref'},{name:'version',raw:'revision'},{name:'effective_from',raw:'valid_from',type:'date'},{name:'effective_to',raw:'valid_until',type:'date'},{name:'passage',raw:'source_text',type:'varchar(4000)'}];
 const base=(id:string,rawId:string,label:string,extra:Column[]):Column[]=>[{name:id,raw:rawId,primary:true},{name:'label',raw:label},...common,...extra];
 export const tables:Table[]=[
@@ -21,23 +21,23 @@ export const sources=[...new Set(tables.map(t=>t.source))].map(id=>({id,database
 export function nativeSourceSchema(source:string){
  return z.object(Object.fromEntries(tables.filter(t=>t.source===source).map(t=>[t.collection,z.array(z.object(Object.fromEntries(t.columns.map(c=>[c.raw,z.string().min(1)]))))])));
 }
-export function ddl(){return `COMPILE USL IF NOT EXISTS ${MODEL_NAME} DEPLOY NAMESPACE ${MODEL_NAMESPACE} DDL\n`+tables.map(t=>`CREATE TABLE ${t.name} (\n${t.columns.map(c=>`    ${c.name} ${c.type??'varchar(300)'}${c.primary?' NOT NULL PRIMARY KEY':c.references?` FOREIGN KEY REFERENCES ${c.references}`:''}`).join(',\n')}\n)`).join(';\n')+';';}
-export function activation(t:Table){return `ACTIVATE USL TABLE ${MODEL_PATH}.${t.name} AS\nSELECT\n${t.columns.map(c=>`    ${c.primary?`COALESCE(r.${c.raw}, '')`:c.type==='date'?`CAST(r.${c.raw} AS DATE)`:`r.${c.raw}`} AS ${c.name}`).join(',\n')}\nFROM ${t.database}.registry LATERAL VIEW explode(${t.collection}) AS r`;}
+export function ddl(modelName=MODEL_NAME,layout=tables,deploy=true){return `COMPILE USL ${deploy?'IF NOT EXISTS ':''}${modelName} ${deploy?'DEPLOY ':''}NAMESPACE ${MODEL_NAMESPACE} DDL\n`+layout.map(t=>`CREATE TABLE ${t.name} (\n${t.columns.map(c=>`    ${c.name} ${c.type??'varchar(300)'}${c.primary?' NOT NULL PRIMARY KEY':c.references?` FOREIGN KEY REFERENCES ${c.references}`:''}`).join(',\n')}\n)`).join(';\n')+';';}
+export function activation(t:Table,modelPath=MODEL_PATH){return `ACTIVATE USL TABLE ${modelPath}.${t.name} AS\nSELECT\n${t.columns.map(c=>`    ${c.primary?`COALESCE(r.${c.raw}, '')`:c.type==='date'?`CAST(r.${c.raw} AS DATE)`:`r.${c.raw}`} AS ${c.name}`).join(',\n')}\nFROM ${t.database}.registry LATERAL VIEW explode(${t.collection}) AS r`;}
 const quote=(v:string)=>"'"+v.replace(/'/g,"''")+"'";
-export function retrievalQueries(request?:SharingCase){
+export function retrievalQueries(request?:SharingCase,modelPath=MODEL_PATH,layout=tables){
  if(request&&(!/^[a-zA-Z0-9_-]*$/.test(request.documentId)||!/^[a-zA-Z0-9_-]*$/.test(request.supplierId)))throw new Error('Invalid case identifier.');
  const doc=request?quote(request.documentId):'',supplier=request?quote(request.supplierId):'';
- return tables.map(t=>{
+ return layout.map(t=>{
  let filter='';
- if(request){switch(t.name){case 'document':filter=`document_id = ${doc}`;break;case 'classification':filter=`classification_id IN (SELECT classification_id FROM ${MODEL_PATH}.document WHERE document_id = ${doc})`;break;case 'supplier':case 'agreement':filter=`supplier_id = ${supplier}`;break;case 'agreement_purpose':filter=`agreement_id IN (SELECT agreement_id FROM ${MODEL_PATH}.agreement WHERE supplier_id = ${supplier})`;break;case 'approval':filter=`document_id = ${doc} AND supplier_id = ${supplier} AND purpose = ${quote(request.purpose)}`;break;}}
- return {table:t.name,source:t.source,query:`SELECT ${t.columns.map(c=>c.name).join(', ')} FROM ${MODEL_PATH}.${t.name}${filter?' WHERE '+filter:''}`};
+ if(request){switch(t.name){case 'document':filter=`document_id = ${doc}`;break;case 'classification':filter=`classification_id IN (SELECT classification_id FROM ${modelPath}.document WHERE document_id = ${doc})`;break;case 'supplier':case 'agreement':filter=`supplier_id = ${supplier}`;break;case 'agreement_purpose':filter=`agreement_id IN (SELECT agreement_id FROM ${modelPath}.agreement WHERE supplier_id = ${supplier})`;break;case 'approval':filter=`document_id = ${doc} AND supplier_id = ${supplier} AND purpose = ${quote(request.purpose)}`;break;}}
+ return {table:t.name,source:t.source,query:`SELECT ${t.columns.map(c=>c.name).join(', ')} FROM ${modelPath}.${t.name}${filter?' WHERE '+filter:''}`};
  });
 }
 export type SemanticRows=Record<string,Record<string,string>[]>;
 const jsonStrings=z.array(z.string());
-export function toEvidence(results:SemanticRows):Evidence[]{
+export function toEvidence(results:SemanticRows,modelPath=MODEL_PATH,layout=tables):Evidence[]{
  const coverage=results.agreement_purpose??[];
- return tables.flatMap(t=>{
+ return layout.flatMap(t=>{
  if(!t.kind)return [];
  return (results[t.name]??[]).map(row=>{
  const id=row[t.columns[0].name];let facts:Record<string,unknown>={};
@@ -48,7 +48,7 @@ export function toEvidence(results:SemanticRows):Evidence[]{
  case 'Approval':facts={documentId:row.document_id,supplierId:row.supplier_id,ownerId:row.owner_id,purpose:row.purpose,status:row.status};break;
  case 'PolicyClause':facts=z.record(z.string(),z.unknown()).parse(JSON.parse(row.config_json));if(facts.rule!==row.rule_key)throw new Error('Policy semantic mapping mismatch.');break;
  }
- return EvidenceSchema.parse({id,kind:t.kind,label:row.label,sourceId:row.source_id,version:row.version,effectiveFrom:row.effective_from,effectiveTo:row.effective_to,passage:row.passage,facts,lineage:{sourceSystem:t.source,semanticTable:`${MODEL_PATH}.${t.name}`,sourceEndpoint:sources.find(s=>s.id===t.source)!.endpoint}});
+ return EvidenceSchema.parse({id,kind:t.kind,label:row.label,sourceId:row.source_id,version:row.version,effectiveFrom:row.effective_from,effectiveTo:row.effective_to,passage:row.passage,facts,lineage:{sourceSystem:t.source,semanticTable:`${modelPath}.${t.name}`,sourceEndpoint:sources.find(s=>s.id===t.source)!.endpoint}});
  });
  });
 }

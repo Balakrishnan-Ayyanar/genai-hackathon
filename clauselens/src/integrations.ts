@@ -3,6 +3,7 @@ import path from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import {type Evidence, type SharingCase} from './model.ts';
 import {retrievalQueries,rowsToObjects,toEvidence,MODEL_PATH,MODEL_VERSION,type SemanticRows} from './semantic.ts';
+import {activeModels} from './active-model.ts';
 const envPath=process.env.CLAUSELENS_ENV_FILE??path.resolve('../zetaris-getting-started/.env.local');
 const settings:Record<string,string>={};
 if(fs.existsSync(envPath)) for(const line of fs.readFileSync(envPath,'utf8').split(/\r?\n/)){const match=line.match(/^\s*([A-Z_0-9]+)\s*=\s*(.*?)\s*$/);if(match)settings[match[1]]=match[2].replace(/^(['"])(.*)\1$/,'$2');}
@@ -13,17 +14,18 @@ export async function sql(query:string):Promise<unknown[][]>{
  const body=await response.json();if(!Array.isArray(body.data))throw new Error('Zetaris returned no result rows.');return body.data;
 }
 export async function retrieve(request?:SharingCase){
- const planned=retrievalQueries(request);
+ const active=activeModels.get();
+ const planned=retrievalQueries(request,active.path,active.tables);
  // Independent tables are read without inner joins: missing facts and
  // opposing approval rows must survive for the evaluator to inspect.
  const results=await Promise.all(planned.map(async p=>({ ...p,rows:rowsToObjects(p.table,await sql(p.query))})));
  const records:SemanticRows=Object.fromEntries(results.map(r=>[r.table,r.rows]));
- const evidence=toEvidence(records);
+ const evidence=toEvidence(records,active.path,active.tables);
  const queries=results.map(({rows,...q})=>({...q,rowCount:rows.length}));
- return {evidence,hash:createHash('sha256').update(JSON.stringify([...evidence].sort((a,b)=>a.id.localeCompare(b.id)))).digest('hex'),retrievedAt:new Date().toISOString(),query:queries.map(q=>q.query).join('\n'),queries,semanticModel:{name:MODEL_PATH,version:MODEL_VERSION,materialized:false},sourceCount:new Set(planned.map(p=>p.source)).size,mode:'live-zetaris-usl' as const};
+ return {evidence,hash:createHash('sha256').update(JSON.stringify([...evidence].sort((a,b)=>a.id.localeCompare(b.id)))).digest('hex'),retrievedAt:new Date().toISOString(),query:queries.map(q=>q.query).join('\n'),queries,semanticModel:{name:active.path,version:active.version,materialized:false},sourceCount:new Set(planned.map(p=>p.source)).size,mode:'live-zetaris-usl' as const};
 }
-export async function model(messages:{role:string;content:string}[],maxTokens=900){
- const response=await fetch(setting('METERLESS_BASE_URL','http://127.0.0.1:8088/v1').replace(/\/$/,'')+'/chat/completions',{method:'POST',headers:{Authorization:`Bearer ${setting('METERLESS_RUNTIME_TOKEN')}`,'meterless-app':'clauselens','meterless-scope':'user','Content-Type':'application/json'},body:JSON.stringify({model:setting('METERLESS_MODEL','meterless/auto'),messages,max_tokens:maxTokens,stream:false}),signal:AbortSignal.timeout(90000)});
+export async function model(messages:{role:string;content:string}[],maxTokens=900,timeoutMs=90000){
+ const response=await fetch(setting('METERLESS_BASE_URL','http://127.0.0.1:8088/v1').replace(/\/$/,'')+'/chat/completions',{method:'POST',headers:{Authorization:`Bearer ${setting('METERLESS_RUNTIME_TOKEN')}`,'meterless-app':'clauselens','meterless-scope':'user','Content-Type':'application/json'},body:JSON.stringify({model:setting('METERLESS_MODEL','meterless/auto'),messages,max_tokens:maxTokens,stream:false}),signal:AbortSignal.timeout(timeoutMs)});
  if(!response.ok)throw new Error(`Nightshift returned HTTP ${response.status}`);
  const body=await response.json();let text=body.choices?.[0]?.message?.content;
  if(typeof text!=='string'||!text.trim())throw new Error('Nightshift returned no content');

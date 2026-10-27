@@ -9,10 +9,11 @@
     "test": "tsx --test tests/*.test.ts",
     "test:hmem": "tsx vendor/hmem/conformance/runner.ts",
     "verify": "tsx scripts/verify.ts",
-    "start": "NODE_ENV=production tsx src/server.ts",
+    "start": "bash scripts/start.sh",
     "test:browser": "playwright test",
     "verify:semantic": "tsx scripts/semantic/verify.ts",
-    "semantic:generate": "tsx scripts/semantic/generate.ts"
+    "semantic:generate": "tsx scripts/semantic/generate.ts",
+    "verify:builder": "tsx scripts/verify-builder.ts"
   },
   "dependencies": {
     "express": "^5.1.0",

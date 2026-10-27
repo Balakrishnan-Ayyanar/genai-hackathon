@@ -24,3 +24,15 @@ id_rsa*
 *.py[cod]
 *.log
 .DS_Store
+
+# Submission media and generated presentation artifacts (kept locally)
+/clauselens-video/
+/clauselens-pitch/
+*.pdf
+*.ppt
+*.pptx
+*.mp4
+*.mov
+*.webm
+*.mp3
+*.wav
