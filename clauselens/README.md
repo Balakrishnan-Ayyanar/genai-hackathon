@@ -4,9 +4,9 @@ Ask a policy question. Inspect the evidence. Understand what would change the an
 
 Local fictional policy-assistance demo built here with **Codex**, as requested. No Cursor usage is claimed. This app neither grants access nor sends documents. Hackathon tool eligibility needs to be checked against the event rules separately.
 
-## Purpose, architecture and submission links
+## Purpose and architecture
 
-The [repository README](../README.md) explains the problem, both workflow diagrams, their shared Zetaris semantic model, the Zetaris/Meterless/NVIDIA integrations, and pre-existing components. It also contains the submission link table; public demo and Google Drive URL fields are intentionally empty until supplied.
+The [repository README](../README.md) explains the problem, both workflow diagrams, their shared Zetaris semantic model, the Zetaris/Meterless/NVIDIA integrations, and pre-existing components.
 
 **Policy Q&A** interprets a sharing question, retrieves evidence through the selected Zetaris semantic model and runs fixed policy checks. **Zetaris Semantic Model Builder** turns a natural-language business goal into reviewed source mappings and a separate deployed model. Explicitly selecting a verified model makes it available to subsequent Q&A retrieval; deployment alone does not select it.
 

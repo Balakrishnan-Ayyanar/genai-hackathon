@@ -8,25 +8,6 @@ The app interprets the employee’s question, retrieves connected evidence throu
 
 This is a **fictional policy-assistance demonstration**. It sends no documents, grants no access and supplies no legal advice. All business records are fictional.
 
-## Demo and submission links
-
-Public URL fields are intentionally empty and will be filled in before submission. Localhost links work only on the machine running the app; they are not public judge-access links.
-
-| Submission item | URL |
-| --- | --- |
-| Public live demo | |
-| Google Drive — presentation video | |
-| Google Drive — slide deck / supporting material | |
-| Source repository | [GitHub](https://github.com/Balakrishnan-Ayyanar/genai-hackathon) |
-
-| Local resource | Link |
-| --- | --- |
-| Workflow 1 — Policy Q&A | [localhost:3100](http://localhost:3100/) |
-| Workflow 2 — Zetaris Semantic Model Builder | [localhost:3100/builder](http://localhost:3100/builder) |
-| Selected semantic model and source mappings | [Local model metadata](http://localhost:3100/api/semantic-model) |
-
-Submission videos, pitch decks, PDFs and generated media remain local and are excluded from this code repository. Public submission links above will be added later.
-
 ## Two workflows and their purpose
 
 | Workflow | Purpose | User input | Output |
